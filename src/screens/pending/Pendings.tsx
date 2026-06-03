@@ -69,51 +69,105 @@ export default function PendingApprovalBootstrapGreen() {
 
   function PendingCard({ item }: any) {
     const isReport = item.type === "BC";
+    const teacherName =
+      teachers.find((_: UserModel) => _.id === item.authorId)?.fullName || "";
+
+    return (
+      <div className="board-paper-card" style={{ background: 'pink' }} >
+        <div className="pin" style={{ background: item.pin }} />
+
+        <div className="board-card-header">
+          <div className="board-main-icon" style={{ background: item.iconBg, color: item.color }}>
+            📋
+          </div>
+
+          <div>
+            <div className="board-card-type">{item.type}</div>
+            <div className="board-card-code" style={{ color: item.color }}>
+              {item.code}
+            </div>
+          </div>
+        </div>
+
+        <div className="board-info-row">
+          <span className="board-info-icon">👥</span>
+          <div>
+            <div>Giáo viên thực hiện</div>
+            <strong>{teacherName}</strong>
+          </div>
+        </div>
+
+        <div className="board-info-row">
+          <span className="board-info-icon">🗓️</span>
+          <div>
+            <div>Ngày gửi duyệt</div>
+            <strong>{item.date}</strong>
+          </div>
+        </div>
+
+        <div className="board-info-row">
+          <span className="board-info-icon">🛒</span>
+          <div>
+            <div>Trạng thái</div>
+            <span className="board-status">⏱ Chờ duyệt</span>
+          </div>
+        </div>
+
+        <div className="board-actions">
+          <button className="btn view">👁 Xem</button>
+          <button className="btn approve">✓ Duyệt</button>
+          <button className="btn reject">↩ Trả lại</button>
+        </div>
+
+        <div className={`board-decor ${item.decor}`}>
+          {item.decor === "flower" ? "🌸" : "🌿"}
+        </div>
+      </div>
+    )
+
+    // const teacherName =
+    //   teachers.find((_: UserModel) => _.id === item.authorId)?.fullName || "";
+
     // return (
     //   <article className="plan-card approval-card">
     //     <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-    //       <div className="d-flex gap-3 min-w-0">
+    //       <div className="d-flex gap-3 min-w-0 w-100">
     //         <div
-    //           className={`approval-type-box ${isReport ? "report" : "plan"}`}
+    //           className={`approval-type-box ${isReport ? "report" : "plan"} flex-shrink-0`}
     //         >
     //           <i
-    //             className={`bi ${isReport ? "bi-file-earmark-text-fill" : "bi-calendar2-week-fill"}`}
+    //             className={`bi ${isReport
+    //                 ? "bi-file-earmark-text-fill"
+    //                 : "bi-calendar2-week-fill"
+    //               }`}
     //           />
     //         </div>
-    //         <div className="min-w-0">
-    //           <div className="d-flex flex-wrap gap-5 mb-2">
-    //             <span className="plan-code">{item.id}</span>
-    //             <span className="pending-badge">
+
+    //         <div className="min-w-0 w-100">
+    //           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-1">
+    //             <h3 className="plan-title mb-0">
+    //               {isReport ? "Báo cáo tháng" : item.type} {item.title}
+    //             </h3>
+
+    //             <span className="pending-badge flex-shrink-0">
     //               <i className="bi bi-hourglass-split me-1" />
     //               Chờ duyệt
     //             </span>
     //           </div>
-    //           <h3 className="plan-title">
-    //             {item.type} {item.title}
-    //           </h3>
+
+    //           <div className="plan-teacher">
+    //             <i className="bi bi-person-check-fill me-1 icon-red" />
+    //             <b>Giáo viên: </b>
+    //             {teacherName}
+    //           </div>
     //         </div>
     //       </div>
 
-    //       {item.comment && <Message color={"red"} size={26} variant="Bold" />}
-    //       {/* <button className="btn reject-btn">
-    //         <i className="bi bi-trash-fill" />
-    //       </button> */}
+    //       {item.comment && <Message color="red" size={26} variant="Bold" />}
     //     </div>
 
     //     <div className="row g-2 mb-3">
-    //       <div className="col-6">
-    //         <div className="mini-info">
-    //           <i className="bi bi-person-check-fill icon-red" />
-    //           <span>
-    //             <b>Giáo viên thực hiện</b>
-    //             {
-    //               teachers.find((_: UserModel) => _.id === item.authorId)
-    //                 ?.fullName
-    //             }
-    //           </span>
-    //         </div>
-    //       </div>
-    //       <div className="col-6">
+    //       <div className="col-12">
     //         <div className="mini-info">
     //           <i className="bi bi-send-check-fill icon-yellow" />
     //           <span>
@@ -128,25 +182,11 @@ export default function PendingApprovalBootstrapGreen() {
     //       </div>
     //     </div>
 
-    //     {/* <div className="plan-waiting-box">
-    //       <i className="bi bi-clipboard2-check-fill icon-yellow me-2" />
-    //       {isReport ? "Báo cáo" : "Kế hoạch"} đã gửi, đang chờ admin kiểm tra và
-    //       duyệt trước khi giáo viên thực hiện.
-    //     </div> */}
-
-    //     <div className="d-flex gap-2 mt-3 pt-3"> {/*border-top-soft*/}
+    //     <div className="d-flex gap-2 mt-3 pt-3">
     //       <Link
     //         to={isReport ? "../reportdetail" : "../plandetail"}
     //         onClick={() => setSelectNavbar("")}
-    //         state={
-    //           isReport
-    //             ? {
-    //               report: item,
-    //             }
-    //             : {
-    //               plan: item,
-    //             }
-    //         }
+    //         state={isReport ? { report: item } : { plan: item }}
     //         className="btn action-btn-soft flex-fill"
     //       >
     //         <i className="bi bi-eye-fill me-2" />
@@ -155,129 +195,8 @@ export default function PendingApprovalBootstrapGreen() {
     //     </div>
     //   </article>
     // );
-    const teacherName =
-      teachers.find((_: UserModel) => _.id === item.authorId)?.fullName || "";
-
-    return (
-      <article className="plan-card approval-card">
-        <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-          <div className="d-flex gap-3 min-w-0 w-100">
-            <div
-              className={`approval-type-box ${isReport ? "report" : "plan"} flex-shrink-0`}
-            >
-              <i
-                className={`bi ${
-                  isReport
-                    ? "bi-file-earmark-text-fill"
-                    : "bi-calendar2-week-fill"
-                }`}
-              />
-            </div>
-
-            <div className="min-w-0 w-100">
-              <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-1">
-                <h3 className="plan-title mb-0">
-                  {isReport ? "Báo cáo tháng" : item.type} {item.title}
-                </h3>
-
-                <span className="pending-badge flex-shrink-0">
-                  <i className="bi bi-hourglass-split me-1" />
-                  Chờ duyệt
-                </span>
-              </div>
-
-              <div className="plan-teacher">
-                <i className="bi bi-person-check-fill me-1 icon-red" />
-                <b>Giáo viên: </b>
-                {teacherName}
-              </div>
-            </div>
-          </div>
-
-          {item.comment && <Message color="red" size={26} variant="Bold" />}
-        </div>
-
-        <div className="row g-2 mb-3">
-          <div className="col-12">
-            <div className="mini-info">
-              <i className="bi bi-send-check-fill icon-yellow" />
-              <span>
-                <b>Ngày gửi</b>
-                {typeof item?.createAt === "number"
-                  ? moment(item?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                  : moment(handleTimeStampFirestore(item?.createAt)).format(
-                      "HH:mm:ss DD/MM/YYYY",
-                    )}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="d-flex gap-2 mt-3 pt-3">
-          <Link
-            to={isReport ? "../reportdetail" : "../plandetail"}
-            onClick={() => setSelectNavbar("")}
-            state={isReport ? { report: item } : { plan: item }}
-            className="btn action-btn-soft flex-fill"
-          >
-            <i className="bi bi-eye-fill me-2" />
-            Xem chi tiết
-          </Link>
-        </div>
-      </article>
-    );
   }
 
-  function PendingRow({ item }: any) {
-    const isReport = item.type === "BC";
-
-    return (
-      <tr>
-        <td>
-          <span className="plan-code">{item.title}</span>
-          <div className="small text-green-muted mt-1">{item.id}</div>
-        </td>
-        <td className="text-green-dark fw-bold">
-          {teachers.find((_: UserModel) => _.id === item.authorId)?.fullName}
-        </td>
-        <td className="text-green-dark fw-bold">
-          {typeof item?.createAt === "number"
-            ? moment(item?.createAt).format("HH:mm:ss DD/MM/YYYY")
-            : moment(handleTimeStampFirestore(item?.createAt)).format(
-                "HH:mm:ss DD/MM/YYYY",
-              )}
-        </td>
-        <td>
-          <span className="pending-badge">
-            <i className="bi bi-hourglass-split me-1" />
-            Chờ duyệt
-          </span>
-          <div className="small text-green-muted mt-1">{item.submittedAt}</div>
-        </td>
-        <td>
-          {item.comment && <Message color={"red"} size={26} variant="Bold" />}
-        </td>
-        <td className="text-end">
-          <Link
-            to={isReport ? "../reportdetail" : "../plandetail"}
-            onClick={() => setSelectNavbar("")}
-            state={
-              isReport
-                ? {
-                    report: item,
-                  }
-                : {
-                    plan: item,
-                  }
-            }
-            className="btn btn-sm action-btn-soft me-2"
-          >
-            Xem
-          </Link>
-        </td>
-      </tr>
-    );
-  }
 
   if (!plans && !reports) return <SpinnerComponent />;
   return (
