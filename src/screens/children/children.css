@@ -85,9 +85,9 @@ body {
 ====================================================== */
 
 .home-header {
-  padding: 20px;
+  padding: 20px 20px 0 20px;
 
-  border-bottom: 1px solid var(--line);
+  /* border-bottom: 1px solid var(--line); */
 
   background:
     linear-gradient(
@@ -134,8 +134,8 @@ body {
 }
 
 .director-avatar {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
 
   border-radius: 50%;
   border: 3px solid var(--green-100);
@@ -281,7 +281,7 @@ body {
 
 .students-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -494,7 +494,7 @@ body {
 
 @media (max-width: 1500px) {
   .students-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 }
 
@@ -504,7 +504,7 @@ body {
   }
 
   .students-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 
@@ -518,7 +518,7 @@ body {
   }
 
   .students-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .brand-title {

@@ -91,14 +91,14 @@ body {
   overflow-y: auto;
   padding: 18px;
 
-  min-height: 100vh;
+  /* min-height: 100vh;
   position: relative;
 
-  background-image: url("../../../public/menu-background.png");
+  background-image: url("../../../public/dashboad-menu.png");
   background-size: cover;
-  background-position: -50% center;
+  background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: fixed; */
 }
 
 .sidebar-backdrop {

@@ -73,7 +73,6 @@ export default function HomeStudentsBootstrapGreen() {
   const { user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
   const { children, setChildren } = useChildrenStore();
   const [plansTotal, setPlansTotal] = useState<PlanModel[]>([]);
   const [reportsTotal, setReportsTotal] = useState<ReportModel[]>([]);
@@ -318,22 +317,24 @@ export default function HomeStudentsBootstrapGreen() {
         <div className="home-shell">
           <main className="home-panel">
             <header className="home-header">
-              <div className="d-flex align-items-center justify-content-between flex-wrap">
-                <Logo type="children" />
-                <div className="text-center flex-grow-1 order-3 order-lg-2 w-100 w-lg-auto">
-                  <img
-                    className="director-avatar"
-                    src={user.avatar || "./QXEdu-icon.png"}
-                    alt="avatar"
-                  />
-                  <h1 className="director-title h3 mb-1">
+              {/* <div className="d-flex align-items-center justify-content-between flex-wrap"> */}
+              <div className="d-flex">
+                {/* <Logo type="children" /> */}
+                <div className="text-center flex-grow-1 w-100 w-lg-auto">
+                  <div className="d-flex justify-content-center">
+                    <img
+                      className="director-avatar"
+                      src={user?.avatar || "./QXEdu-icon.png"}
+                      alt="avatar"
+                    />
+                  </div>
+                  <h1 className="director-title h5 mb-1">
                     Cô {user.fullName} _ {user.position}
                   </h1>
-                  <div className="director-role">
+                  {/* <div className="director-role">
                     Chọn trẻ để xem hồ sơ, kế hoạch và báo cáo can thiệp
-                  </div>
+                  </div> */}
                 </div>
-
                 <button
                   className="logout-btn"
                   aria-label="Đăng xuất"
@@ -348,32 +349,18 @@ export default function HomeStudentsBootstrapGreen() {
             </header>
 
             <section className="content-area">
-              <div className="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+              {/* <div className="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
                 <div>
                   <h2 className="page-title mb-1">Danh sách trẻ</h2>
                   <div className="fs-6 text-green-muted fw-semibold">
                     Tổng quan nhanh danh sách trẻ đang can thiệp tại trung tâm.
                   </div>
                 </div>
-                <div className="d-flex gap-2 flex-wrap">
-                  <span className="stat-pill yellow">
-                    <i className="bi bi-people-fill" />
-                    {children.length} trẻ
-                  </span>
-                  <span className="stat-pill red">
-                    <i className="bi bi-bell-fill" />
-                    {
-                      plansTotal
-                        .concat(reportsTotal)
-                        .filter((_) => _.status === "pending").length
-                    }
-                  </span>
-                </div>
-              </div>
+              </div> */}
 
               <div className="search-panel mb-4">
                 <div className="row g-3 align-items-center">
-                  <div className="col-12 col-lg-12">
+                  <div className="col-12 col-lg-9">
                     <div className="search-box">
                       <i className="bi bi-search" />
                       <input
@@ -385,28 +372,28 @@ export default function HomeStudentsBootstrapGreen() {
                     </div>
                   </div>
 
-                  {/* <div className="col-12 col-lg-1 d-flex justify-content-lg-end gap-2">
-                    <button
-                      className={`btn view-btn ${viewMode === "grid" ? "active" : ""}`}
-                      onClick={() => setViewMode("grid")}
-                      aria-label="Xem dạng lưới"
-                    >
-                      <i className="bi bi-grid-3x3-gap-fill" />
-                    </button>
-                    <button
-                      className={`btn view-btn ${viewMode === "list" ? "active" : ""}`}
-                      onClick={() => setViewMode("list")}
-                      aria-label="Xem dạng danh sách"
-                    >
-                      <i className="bi bi-list-ul" />
-                    </button>
-                  </div> */}
+                  <div className="col-12 col-lg-3 d-flex justify-content-lg-end gap-2">
+                    <div className="d-flex gap-2 flex-wrap me-3">
+                      <span className="stat-pill yellow">
+                        <i className="bi bi-people-fill" />
+                        {children.length} trẻ
+                      </span>
+                      <span className="stat-pill red">
+                        <i className="bi bi-bell-fill" />
+                        {
+                          plansTotal
+                            .concat(reportsTotal)
+                            .filter((_) => _.status === "pending").length
+                        }
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {filteredStudents.length > 0 ? (
                 <div className="students-grid">
-                  {filteredStudents.map((student) => (
+                  {[...filteredStudents].map((student) => (
                     <StudentCard
                       key={student.id}
                       student={student}
@@ -414,65 +401,6 @@ export default function HomeStudentsBootstrapGreen() {
                     />
                   ))}
                 </div>
-                // viewMode === "grid" ? (
-                //   <div className="students-grid">
-                //     {filteredStudents.map((student) => (
-                //       <StudentCard
-                //         key={student.id}
-                //         student={student}
-                //         isNotification={handleShowNotification(student.id)}
-                //       />
-                //     ))}
-                //   </div>
-                // ) : (
-                //   <div className="students-list">
-                //     {filteredStudents.map((student) => (
-                //       <div className="student-list-row" key={student.id}>
-                //         <img src={student.avatar} alt={student.fullName} />
-                //         {student.status && student.status === "paused" && (
-                //           <div
-                //             style={{
-                //               position: "absolute",
-                //               inset: 0,
-                //               backgroundColor: "rgba(0,0,0,0.6)",
-                //               borderRadius: 10,
-                //               display: "flex",
-                //               alignItems: "center",
-                //               justifyContent: "center",
-                //               flexDirection: "column",
-                //               gap: 8,
-                //             }}
-                //           >
-                //             <div style={{ fontSize: 30 }}>🔒</div>
-
-                //             <b className="text-white">Tạm dừng</b>
-                //           </div>
-                //         )}
-                //         <div className="flex-grow-1 min-w-0">
-                //           <div className="fw-black text-green-dark">
-                //             {student.fullName}{" "}
-                //           </div>
-                //           <div className="small text-green-muted fw-semibold">
-                //             {student.id}
-                //           </div>
-                //         </div>
-                //         {handleShowNotification(student.id) && (
-                //           <span className="badge-pending">
-                //             <i className="bi bi-bell-fill" />
-                //           </span>
-                //         )}
-                //         {student.status && student.status !== "paused" && (
-                //           <Link
-                //             to={`home/${student.id}`}
-                //             className="btn open-btn"
-                //           >
-                //             Mở hồ sơ
-                //           </Link>
-                //         )}
-                //       </div>
-                //     ))}
-                //   </div>
-                // )
               ) : (
                 <div className="empty-state">
                   <i

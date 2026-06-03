@@ -329,6 +329,9 @@ export default function DashboardBootstrapGreen() {
             </nav>
 
             <div className="mt-auto pt-4">
+              <div>
+                <img alt="dashboad-menu" src="/menu-background.png"/>
+              </div>
               <div className="support-card text-center">
                 <div className="support-icon mx-auto mb-3">
                   <i className="bi bi-heart-pulse-fill" />
