@@ -301,7 +301,10 @@ export default function DashboardBootstrapGreen() {
               {menuItems.map((item) => (
                 <Link
                   to={`${item.navigate}`}
-                  onClick={() => setSelectNavbar(item.navigate)}
+                  onClick={() => {
+                    setSelectNavbar(item.navigate)
+                    onClose()
+                  }}
                   key={item.label}
                   type="button"
                   className={`sidebar-link btn border-0 text-start d-flex align-items-center justify-content-between ${selectNavbar === item.navigate ? "active" : ""}`}

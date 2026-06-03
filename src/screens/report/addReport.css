@@ -66,6 +66,7 @@
   border-color: rgba(6, 95, 70, 0.12);
   color: #334155;
   line-height: 1.55;
+  text-align:justify;
 }
 
 .field-badge {
@@ -211,7 +212,7 @@
 }
 
 .report-create-table .goal-cell {
-  width: 18%;
+  width: 37%;
 }
 
 .report-create-table .support-cell {
@@ -219,12 +220,14 @@
 }
 
 .report-create-table .content-cell {
-  width: 32%;
+  width: 25%;
 }
 
 .report-create-table .observe-cell {
-  width: 32%;
+  width: 42%;
 }
+
+
 /* ===== AI CELL LAYOUT ===== */
 .summary-ai-wrap {
   display: flex;
