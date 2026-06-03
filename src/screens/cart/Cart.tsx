@@ -24,118 +24,52 @@ import {
   usePlanStore,
   useSelectNavbarStore,
   useTargetStore,
-  useUserStore
+  useUserStore,
 } from "../../zustand";
 import "./cart.css";
 
-function GoalCartCard({ cart }: any) {
+function GoalCartItem({ cart }: any) {
   const { fields } = useFieldStore();
   const { interventions } = useInterventionStore();
   const { targets } = useTargetStore();
-  // const { suggests } = useSuggestStore();
   const { removeCart, editCart } = useCartStore();
-  // const [type, setType] = useState("");
-  // const [text, setText] = useState("");
-  // const [suggest, setSuggest] = useState<SuggestModel>();
-
-  // useEffect(() => {
-  //   if (cart && cart.content) {
-  //     setText(cart.content);
-  //     const index = suggests.findIndex(
-  //       (suggest) => suggest.name === cart.content,
-  //     );
-  //     if (index !== -1) {
-  //       setSuggest(suggests[index]);
-  //       setType("Gợi ý");
-  //     } else {
-  //       setType("Ý khác");
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [cart]);
-
-  // useEffect(() => {
-  //   if (type === "Ý khác" && text) {
-  //     editCart(cart.id, { ...cart, content: text });
-  //   }
-  //   if (type === "Gợi ý" && suggest) {
-  //     editCart(cart.id, { ...cart, content: suggest.name });
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [text, suggest]);
 
   const handleSelectIntervention = (val: string) => {
     editCart(cart.id, { ...cart, intervention: val });
   };
-  // const handleSuggestsWithField = (fieldId: string) => {
-  //   const items = suggests.filter((suggest) => suggest.fieldId === fieldId);
-  //   return items;
-  // };
 
   return (
-    <article className="goal-cart-card">
-      <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-        <div className="min-w-0">
-          <div className="d-flex flex-wrap gap-2 mb-2">
-            <span className="goal-area">
-              <i className="bi bi-flower2 me-1" />
-              {convertTargetField(cart.targetId, targets, fields).nameField}
-            </span>
-            <span className="goal-level">Level: {cart.level}</span>
+    <tr key={cart.id}>
+      <td className="area-cell">
+        {convertTargetField(cart.targetId, targets, fields).nameField}
+      </td>
 
-          </div>
-          {/* <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-            <span className="goal-area">
-              <i className="bi bi-flower2 me-1" />
-              {convertTargetField(cart.targetId, targets, fields).nameField}
-            </span>
+      <td className="goal-cell">
+        <div className="fw-semibold text-green-dark">{cart.name}</div>
 
-            <span className="goal-level">
-              Level: {cart.level}
-            </span>
-
-            <select
-              className="form-select form-select-sm intervention-select"
-              value={cart.intervention}
-              onChange={(e) => handleSelectIntervention(e.target.value)}
-            >
-              <option value="">Mức độ hỗ trợ</option>
-              {interventions.map((item) => (
-                <option value={item.name} key={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </div> */}
-          <h3 className="goal-title">{cart.name}</h3>
-          <div className="goal-description-card">
-            <div className="goal-description-label">
-              <i className="bi bi-card-text me-2" />
-              Mô tả
-            </div>
-
-            <div className="goal-description-content">
-              {cart.content || "Chưa có mô tả cho mục tiêu này. Liên hệ Admin"}
-            </div>
-          </div>
-
-          <div className="row g-2 mt-2">
-            <div className="col-12 col-md-12">
-              <select
-                className="form-select"
-                value={cart.intervention}
-                onChange={(val) => handleSelectIntervention(val.target.value)}
-              >
-                <option value="">Chọn mức độ hỗ trợ</option>
-                {interventions.map((_) => (
-                  <option value={_.name} key={_.id}>
-                    {_.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+        <div>
+          <span className="goal-level">Level: {cart.level}</span>
         </div>
+      </td>
+      <td className="content-cell">
+        {cart.content || "Chưa có mô tả cho mục tiêu này. Liên hệ Admin"}
+      </td>
+
+      <td className="support-cell">
+        <select
+          className="form-select"
+          value={cart.intervention}
+          onChange={(val) => handleSelectIntervention(val.target.value)}
+        >
+          <option value="">Chọn mức độ hỗ trợ</option>
+          {interventions.map((_) => (
+            <option value={_.name} key={_.id}>
+              {_.name}
+            </option>
+          ))}
+        </select>
+      </td>
+      <td>
         <button
           className="btn remove-btn"
           onClick={() => {
@@ -150,55 +84,8 @@ function GoalCartCard({ cart }: any) {
         >
           <i className="bi bi-trash3-fill" />
         </button>
-      </div>
-
-
-      {/* <div className="d-flex flex-wrap align-items-center mb-2">
-        <button
-          type="button"
-          className="btn btn-success"
-          onClick={() => setType("Gợi ý")}
-        >
-          Gợi ý
-        </button>
-        <SpaceComponent width={10} />
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => setType("Ý khác")}
-        >
-          Ý khác
-        </button>
-      </div> */}
-
-      {/* <div>
-        <SpaceComponent height={8} />
-        {type === "Gợi ý" && (
-          <Select<SuggestModel>
-            getOptionLabel={(option) => option.name}
-            getOptionValue={(option) => option.id.toString()}
-            options={handleSuggestsWithField(cart.fieldId)}
-            maxMenuHeight={sizes.height}
-            onChange={(val: SingleValue<SuggestModel>) =>
-              setSuggest(val as SuggestModel)
-            }
-            value={suggest}
-          />
-        )}
-
-        {type === "Ý khác" && (
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="form-control"
-            placeholder="Nhập đánh giá"
-            rows={5}
-            cols={400}
-            id="floatingTextarea2"
-          ></textarea>
-        )}
-      </div> */}
-    </article>
+      </td>
+    </tr>
   );
 }
 
@@ -357,14 +244,31 @@ export default function GoalCartBootstrapGreen() {
         <div className="row g-4">
           <div className="col-12 col-xl-9">
             {carts.length > 0 ? (
-              <div className="row g-3 g-xl-4">
-                {carts.length > 0 &&
-                  groupArrayWithField(carts, "fieldId").map((cart) => (
-                    <div className="col-12 col-lg-12" key={cart.id}>
-                      <GoalCartCard cart={cart} />
-                    </div>
-                  ))}
-              </div>
+                <div className="table-responsive cart-table-wrap">
+                  <table className="table cart-table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th className="area-cell">Lĩnh vực</th>
+                        <th className="goal-cell">Mục tiêu</th>
+                        <th className="content-cell">Nội dung</th>
+                        <th className="support-cell">Mức độ hỗ trợ</th>
+                        <th className="action-cell">Hành động</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {carts.length > 0 &&
+                        groupArrayWithField(carts, "fieldId").map(
+                          (_, index) => (
+                            <GoalCartItem
+                              key={`goal-cart-${_.id}-${index}`}
+                              cart={_}
+                            />
+                          ),
+                        )}
+                    </tbody>
+                  </table>
+                </div>
             ) : (
               <div className="empty-cart">
                 <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
@@ -421,7 +325,7 @@ export default function GoalCartBootstrapGreen() {
                 ) : (
                   <>
                     <i className="bi bi-send-check-fill me-2" />
-                    Gửi kế hoạch chờ duyệt
+                    Gửi chờ duyệt
                   </>
                 )}
               </button>

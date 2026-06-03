@@ -36,5 +36,64 @@ html, body, #root { min-height:100%; background:#dff7e8!important; } body{margin
   min-width: 180px;
   max-width: 250px;
 }
+
+.cart-table-wrap {
+  height: auto;
+  max-height: none;
+
+  overflow-x: auto;
+  overflow-y: visible;
+
+  border-radius: 22px;
+  border: 1px solid var(--line);
+}
+
+.cart-table {
+  width: 100%;
+  min-width: 0 !important;
+  table-layout: fixed;
+  margin-bottom: 0;
+  --bs-table-bg: #fff;
+}
+
+.cart-table thead th {
+  position: static;
+  background: #f0fdf4 !important;
+  color: var(--green-900);
+  font-size: 0.86rem;
+  font-weight: 900;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 12px;
+}
+
+.cart-table td {
+  vertical-align: top;
+  color: #334155;
+  line-height: 1.55;
+  padding: 14px 12px;
+  border-color: rgba(6, 95, 70, 0.12);
+}
+/* Cột layout */
+.cart-table .area-cell {
+  width: 10%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.cart-table .goal-cell {
+  width: 37%;
+}
+
+.cart-table .content-cell {
+  width: 25%;
+}
+
+.cart-table .support-cell {
+  width: 20%;
+}
+
+.cart-table .action-cell {
+  width: 8%;
+}
 @media (min-width:992px){.app-sidebar{transform:none}.sidebar-backdrop{display:none}.app-main{margin-left:var(--sidebar-width);width:calc(100% - var(--sidebar-width))}}@media (max-width:575.98px){:root{--sidebar-width:min(88vw,320px)}.sidebar-inner{padding:20px 16px}.brand-logo{width:52px;height:52px}.logo-title{font-size:.76rem;max-width:185px}.action-btn-primary,.action-btn-soft{padding:10px 12px}.goal-cart-card{padding:15px}}
       

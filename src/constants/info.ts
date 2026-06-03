@@ -1,3 +1,10 @@
+// types:
+export interface PlanCardTheme {
+  bg: string;
+  color: string;
+  icon: string;
+}
+
 // variables:
 export const CENTER_NAME =
   "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI";
@@ -8,34 +15,42 @@ const planCardThemes = [
   {
     bg: "#fdecef",
     color: "#e84c7f",
+    icon: "/icons/gim_red.png",
   },
   {
     bg: "#fff8e5",
     color: "#d9a300",
+    icon: "/icons/gim_yellow.png",
   },
   {
     bg: "#eef8df",
     color: "#4caf50",
+    icon: "/icons/gim_green.png",
   },
   {
     bg: "#edf7ff",
     color: "#2196f3",
+    icon: "/icons/gim_blue.png",
   },
   {
     bg: "#f5efff",
     color: "#9c27b0",
+    icon: "/icons/gim_violet.png",
   },
   {
     bg: "#fff1ea",
     color: "#ff6f00",
+    icon: "/icons/gim_orange.png",
   },
   {
     bg: "#ebfbf8",
     color: "#009688",
+    icon: "/icons/gim_cyan.png",
   },
   {
-    bg: "#fdecef",
-    color: "#e84c7f",
+    bg: "#ebfbf8",
+    color: "#064617",
+    icon: "/icons/gim_white.png",
   },
 ];
 
@@ -95,7 +110,7 @@ export const calculateAgeDetail = (birthStr: string) => {
 
   return { years, months, days };
 };
-export const getCardTheme = (id: string) => {
+export const getCardTheme = (id: string): PlanCardTheme  => {
   const hash = id
     .split("")
     .reduce((sum, char) => sum + char.charCodeAt(0), 0);

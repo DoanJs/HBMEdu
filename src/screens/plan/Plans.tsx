@@ -22,7 +22,7 @@ export default function ApprovedPlansBootstrapGreen() {
   const teacherMap = useMemo(() => {
     const map: any = {};
     teachers.forEach((t) => {
-      map[t.id] = t.fullName;
+      map[t.id] = t;
     });
     return map;
   }, [teachers]);
@@ -38,7 +38,7 @@ export default function ApprovedPlansBootstrapGreen() {
     const search = keyword.trim().toLowerCase();
 
     return planNews.filter((item: any) => {
-      const teacherName = teacherMap[item.authorId] || "";
+      const teacherName = teacherMap[item.authorId]?.fullName || "";
 
       const createdTime = formatDateSearch(item.createAt);
       const updatedTime = formatDateSearch(item.updateAt);
@@ -56,8 +56,8 @@ export default function ApprovedPlansBootstrapGreen() {
   }, [planNews, keyword, teacherMap]);
 
   function PlanCard({ plan }: any) {
-    const teacherName =
-      teachers.find((_: UserModel) => _.id === plan.authorId)?.fullName || "";
+    // const teacherName =
+    //   teachers.find((_: UserModel) => _.id === plan.authorId)?.fullName || "";
     const theme = getCardTheme(plan.id);
     return (
       <Link
@@ -70,7 +70,7 @@ export default function ApprovedPlansBootstrapGreen() {
           >
             <div className="plan-kh-badge">
               <img
-                src="/logo512.png"
+                src={theme.icon}
                 alt=""
                 className="plan-kh-badge-img"
               />
@@ -123,11 +123,11 @@ export default function ApprovedPlansBootstrapGreen() {
                 <div className="plan-teacher-box">
                   <img
                     className="plan-avatar"
-                    src="https://i.pravatar.cc/40"
+                    src={teacherMap[plan.authorId]?.avatar}
                     alt=""
                   />
                   <span>
-                    {teacherName}</span>
+                    {teacherMap[plan.authorId]?.fullName}</span>
                 </div>
               </div>
             </div>

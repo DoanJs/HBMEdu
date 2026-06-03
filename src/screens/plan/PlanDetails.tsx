@@ -331,20 +331,6 @@ export default function PlanDetailBootstrapGreen() {
           </div>
         </div>
 
-        {isPending && isComment && (
-          <div className="plan-hero mb-4 feedback-box">
-            <Message color="#ef4444" size={26} variant="Bold" />
-
-            <div className="ms-2">
-              <span className="fw-bold text-danger-custom">
-                Góp ý từ cô {plan.comment.split("@Js@")[0] || user?.fullName}:
-              </span>
-
-              <div className="mt-1 feedback-content">{text}</div>
-            </div>
-          </div>
-        )}
-
         <div className="plan-detail-panel p-3 p-md-4">
           {/* <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
             <div>
@@ -381,7 +367,7 @@ export default function PlanDetailBootstrapGreen() {
             </div>
           </div>
 
-          <div className="plan-table-wrap">
+          <div className="plan-table-wrap mb-3">
             {/* <table className="table plan-table align-middle">
               <thead>
                 <tr>
@@ -474,6 +460,20 @@ export default function PlanDetailBootstrapGreen() {
               <GoalMobileCard key={goal.id} goal={goal} index={index} />
             ))}
           </div>
+
+          {isPending && isComment && (
+            <div className="plan-hero feedback-box">
+              <Message color="#ef4444" size={26} variant="Bold" />
+
+              <div className="ms-2">
+                <span className="fw-bold text-danger-custom">
+                  Góp ý từ cô {plan.comment.split("@Js@")[0] || user?.fullName}:
+                </span>
+
+                <div className="mt-1 feedback-content">{text}</div>
+              </div>
+            </div>
+          )}
 
           {isPending && (
             <div className="pending-actions mt-3 border-top-soft">

@@ -14,7 +14,6 @@ import "./report.css";
 
 export default function ApprovedReportBootstrapGreen() {
   const [keyword, setKeyword] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
   const { reports } = useReportStore();
   const [reportNews, setReportNews] = useState<ReportModel[]>([]);
   const { setSelectNavbar } = useSelectNavbarStore();
@@ -55,87 +54,7 @@ export default function ApprovedReportBootstrapGreen() {
       return !search || content.includes(search);
     });
   }, [reportNews, keyword, teacherMap]);
-  function PlanCard({ plan }: any) {
-    const teacherName =
-      teachers.find((_: UserModel) => _.id === plan.authorId)?.fullName || "";
-    const theme = getCardTheme(plan.id);
-    return (
-      <Link
-        to="../plandetail"
-        onClick={() => setSelectNavbar("")}
-        state={{ plan }} className="container-fluid py-4 text-decoration-none cursor-pointer">
-        <div className="row g-4">
-          <div
-            className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative"
-          >
-            <div className="plan-kh-badge">
-              <img
-                src="/logo512.png"
-                alt=""
-                className="plan-kh-badge-img"
-              />
-            </div>
-            <div
-              className="plan-kh-card"
-              style={{ background: theme.bg }}
-            >
-
-
-              <div className="plan-kh-glass" />
-              <div className="d-flex justify-content-between align-items-start">
-                <div
-                  className="plan-kh-title"
-                  style={{ color: theme.color }}
-                >
-                  {plan.type} {plan.title}
-                </div>
-
-                <span className="status-approved flex-shrink-0">
-                  <i className="bi bi-patch-check-fill me-1" />
-                  {plan.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
-                </span>
-              </div>
-
-
-              <div className="plan-kh-info">
-                <i className="bi bi-send-check-fill icon-yellow" /> Ngày tạo:&ensp;
-                {typeof plan?.createAt === "number"
-                  ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                  : moment(handleTimeStampFirestore(plan?.createAt)).format(
-                    "HH:mm:ss DD/MM/YYYY",
-                  )}
-              </div>
-
-              <div className="plan-kh-info">
-                <i className="bi bi-calendar-heart icon-red" /> Ngày duyệt:&ensp;
-                {typeof plan?.updateAt === "number"
-                  ? moment(plan?.updateAt).format("HH:mm:ss DD/MM/YYYY")
-                  : moment(handleTimeStampFirestore(plan?.updateAt)).format(
-                    "HH:mm:ss DD/MM/YYYY",
-                  )}
-              </div>
-
-              <div className="plan-kh-info">
-                <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện :
-              </div>
-
-              <div className="plan-kh-footer">
-                <div className="plan-teacher-box">
-                  <img
-                    className="plan-avatar"
-                    src="https://i.pravatar.cc/40"
-                    alt=""
-                  />
-                  <span>
-                    {teacherName}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Link>
-    )
-  }
+  
 
   function ReportCard({ report }: any) {
     const teacherName =
@@ -155,7 +74,7 @@ export default function ApprovedReportBootstrapGreen() {
           >
             <div className="report-kh-badge">
               <img
-                src="/logo512.png"
+                src={theme.icon}
                 alt=""
                 className="report-kh-badge-img"
               />
