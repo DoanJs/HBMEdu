@@ -1,8 +1,8 @@
-import { where } from "firebase/firestore";
+import { doc, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Message } from "iconsax-react";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SpinnerComponent } from "../../components";
 import LoadingOverlay from "../../components/LoadingOverLay";
@@ -16,12 +16,13 @@ import {
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { exportWord } from "../../exportFile/WordExport";
-import { functions } from "../../firebase.config";
+import { db, functions } from "../../firebase.config";
 import { PlanTaskModel, UserModel } from "../../models";
 import {
   useCartEditStore,
   useCartStore,
   useChildStore,
+  useCommentStore,
   useFieldStore,
   usePlanStore,
   useSelectNavbarStore,
@@ -30,6 +31,7 @@ import {
   useUserStore,
 } from "../../zustand";
 import "./plandetail.css";
+import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function PlanDetailBootstrapGreen() {
   const [showFeedback, setShowFeedback] = useState(false);
@@ -37,6 +39,7 @@ export default function PlanDetailBootstrapGreen() {
   const [disableComment, setDisableComment] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isComment, setIsComment] = useState(false);
+  const [historyComment, setHistoryComment] = useState(false);
 
   const location = useLocation();
   const { plan } = location.state || {};
@@ -54,14 +57,21 @@ export default function PlanDetailBootstrapGreen() {
   const { setCartEdit } = useCartEditStore();
   const [showDelete, setShowDelete] = useState(false);
   const { removePlan } = usePlanStore();
+  const { addComment, comments } = useCommentStore()
+
+  const myComments = comments.filter(cmt => cmt._id === plan.id) || []
+
+  const teacherMap = useMemo(() => {
+    const map: any = {};
+    teachers.forEach((t) => {
+      map[t.id] = t;
+    });
+    return map;
+  }, [teachers]);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (plan) {
-      if (plan.comment) {
-        setIsComment(true);
-        setText(plan.comment.split("@Js@")[1]);
-      }
       getDocsData({
         nameCollect: "planTasks",
         condition: [
@@ -73,8 +83,18 @@ export default function PlanDetailBootstrapGreen() {
     }
     // eslint-disable-next-line
   }, [plan]);
+
   useEffect(() => {
-    if (text !== plan.comment?.split("@Js@")[1]) {
+    if (myComments) {
+      if (myComments.length > 0) {
+        setIsComment(true)
+      }
+    }
+    // eslint-disable-next-line
+  }, [myComments]);
+
+  useEffect(() => {
+    if (text !== myComments[0]?.content) {
       setDisableComment(false);
     } else {
       setDisableComment(true);
@@ -137,22 +157,41 @@ export default function PlanDetailBootstrapGreen() {
   const handleSaveComment = async () => {
     setShowFeedback(false);
     setIsLoading(true);
-    const indexPlan = plans.findIndex((p) => p.id === plan.id);
-    editPlan(plan.id, {
-      ...plans[indexPlan],
-      comment: text ? `${user?.fullName}@Js@${text}` : "",
-      updateById: user?.id,
-    });
+    const newComment = {
+      _id: plan.id,
+      authorId: user?.id || '',
+      childId: child?.id || '',
+      content: text,
+      createAt: Date.now(),
+      id: "",
+      teacherIds: plan.teacherIds,
+      type: 'KH',
+      updateAt: Date.now()
+    }
 
+    addComment(newComment)
+
+    await addDocData({
+      nameCollect: 'comments',
+      value: { ...newComment, createAt: serverTimestamp(), updateAt: serverTimestamp(), },
+      metaDoc: 'comments',
+    })
+
+    await updateDoc(doc(db, "Meta", 'comments'), {
+      lastUpdated: serverTimestamp(),
+    });
     await updateDocData({
       nameCollect: "plans",
       id: plan.id,
       metaDoc: "plans",
       valueUpdate: {
-        comment: text !== "" ? `${user?.fullName}@Js@${text}` : "",
+        comment: `${text}-${user?.id}-${user?.fullName}`,
         updateById: user?.id,
       },
     });
+
+
+    setText("")
     setIsComment(true);
     setIsLoading(false);
     setDisableComment(true);
@@ -260,7 +299,6 @@ export default function PlanDetailBootstrapGreen() {
               >
                 {plan.title}
               </h2>
-              {/* <span className="plan-code me-3">{plan.id}</span> */}
               {isPending ? (
                 <span className="pending-badge">
                   <i className="bi bi-hourglass-split me-1" />
@@ -311,8 +349,8 @@ export default function PlanDetailBootstrapGreen() {
                     {typeof plan?.createAt === "number"
                       ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
                       : moment(handleTimeStampFirestore(plan?.createAt)).format(
-                          "HH:mm:ss DD/MM/YYYY",
-                        )}
+                        "HH:mm:ss DD/MM/YYYY",
+                      )}
                   </span>
                 </div>
                 <div className="mini-info">
@@ -332,23 +370,6 @@ export default function PlanDetailBootstrapGreen() {
         </div>
 
         <div className="plan-detail-panel p-3 p-md-4">
-          {/* <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-            <div>
-              <h3 className="h5 fw-black text-green-dark mb-1">
-                Bảng nội dung kế hoạch
-              </h3>
-              <div className="small text-green-muted fw-semibold">
-                Nội dung cụ thể của kế hoạch can thiệp trong tháng
-              </div>
-            </div>
-
-            <div className="col-12 col-sm-6 col-lg-3 text-lg-end">
-              <span className="status-approved">
-                <i className="bi bi-list-check me-2" />
-                {planTasks.length} mục tiêu hiển thị
-              </span>
-            </div>
-          </div> */}
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-3">
             <div>
               <h3 className="h5 fw-black text-green-dark mb-1">
@@ -368,54 +389,14 @@ export default function PlanDetailBootstrapGreen() {
           </div>
 
           <div className="plan-table-wrap mb-3">
-            {/* <table className="table plan-table align-middle">
-              <thead>
-                <tr>
-                  <th>Lĩnh vực</th>
-                  <th>Mục tiêu</th>
-                  <th>Mức độ hỗ trợ</th>
-                  <th>Nội dung</th>
-                </tr>
-              </thead>
-              <tbody>
-                {planTasks.length > 0 &&
-                  hanldeGroupPlanWithField(planTasks).map((goal) => (
-                    <tr key={goal.id}>
-                      <td className="area-cell">
-                        {
-                          convertTargetField(goal.targetId, targets, fields)
-                            .nameField
-                        }
-                      </td>
-                      <td className="goal-cell">
-                        {
-                          convertTargetField(goal.targetId, targets, fields)
-                            .nameTarget
-                        }
-                        <div>
-                          <span className="goal-level">
-                            Level:{" "}
-                            {
-                              convertTargetField(goal.targetId, targets, fields)
-                                .levelTarget
-                            }
-                          </span>
-                        </div>
-                      </td>
-                      <td className="support-cell">{goal.intervention}</td>
-                      <td className="content-cell">{goal.content}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table> */}
             <div className="table-responsive plan-table-wrap">
               <table className="table plan-table align-middle mb-0">
                 <thead>
                   <tr>
-                    <th className="area-cell">Lĩnh vực</th>
-                    <th className="goal-cell">Mục tiêu</th>
-                    <th className="support-cell">Mức độ hỗ trợ</th>
-                    <th className="content-cell">Nội dung</th>
+                    <th className='area-cell'>Lĩnh vực</th>
+                    <th className='goal-cell'>Mục tiêu</th>
+                    <th className='support-cell'>Mức độ hỗ trợ</th>
+                    <th className='content-cell'>Nội dung</th>
                   </tr>
                 </thead>
 
@@ -462,16 +443,32 @@ export default function PlanDetailBootstrapGreen() {
           </div>
 
           {isPending && isComment && (
-            <div className="plan-hero feedback-box">
-              <Message color="#ef4444" size={26} variant="Bold" />
+            <div className='d-flex align-items-start justify-content-between comment-total'>
+              <div className="plan-hero feedback-box flex-grow-1 mb-3 comment-content me-2">
+                <Message color="#ef4444" size={26} variant="Bold" />
 
-              <div className="ms-2">
-                <span className="fw-bold text-danger-custom">
-                  Góp ý từ cô {plan.comment.split("@Js@")[0] || user?.fullName}:
-                </span>
+                <div className="ms-2">
+                  <span className="text-danger-custom">
+                    Góp ý từ cô <b>{teacherMap[myComments[0]?.authorId]?.fullName || user?.fullName}</b> vào lúc {
+                      typeof myComments[0]?.createAt === "number"
+                        ? moment(myComments[0]?.createAt).format("HH:mm:ss DD/MM/YYYY")
+                        : moment(handleTimeStampFirestore(myComments[0]?.createAt)).format(
+                          "HH:mm:ss DD/MM/YYYY",
+                        )
+                    }:
+                  </span>
 
-                <div className="mt-1 feedback-content">{text}</div>
+                  <div className="mt-1 feedback-content">{myComments[0]?.content}</div>
+                </div>
               </div>
+
+              <button
+                className="btn action-btn-comment flex-shrink-0"
+                onClick={() => setHistoryComment(true)}
+              >
+                <i className="bi bi-send-check-fill me-2" />
+                Lịch sử góp ý
+              </button>
             </div>
           )}
 
@@ -480,14 +477,14 @@ export default function PlanDetailBootstrapGreen() {
               {["Phó Giám đốc", "Giám đốc"].includes(
                 user?.position as string,
               ) && (
-                <button
-                  className="btn action-btn-soft"
-                  onClick={() => setShowFeedback(true)}
-                >
-                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
-                  Góp ý
-                </button>
-              )}
+                  <button
+                    className="btn action-btn-soft"
+                    onClick={() => setShowFeedback(true)}
+                  >
+                    <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                    Góp ý
+                  </button>
+                )}
               {user?.role === "admin" && (
                 <button className="btn approve-btn" onClick={handleApproved}>
                   <i className="bi bi-check-circle-fill me-2" />
@@ -516,6 +513,78 @@ export default function PlanDetailBootstrapGreen() {
         </div>
       </section>
 
+      {isPending && historyComment && (
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal-history-comment">
+            <h5 className="fw-black text-green-dark mb-2">Lịch sử góp ý</h5>
+            <p className="text-green-muted small">
+              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên môn.
+            </p>
+            <div className="table-responsive comment-table-wrap">
+              <table className="table comment-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th className="area-cell">Thời gian</th>
+                    <th className="goal-cell">Giáo viên</th>
+                    <th className="content-cell">Nội dung</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {myComments.length > 0 &&
+                    myComments.map((cmt, index) => {
+                      return (
+                        <tr key={`cmt-${cmt.id}-${index}`}>
+                          <td>
+                            {typeof cmt?.createAt === "number"
+                              ? moment(cmt?.createAt).format("HH:mm:ss DD/MM/YYYY")
+                              : moment(handleTimeStampFirestore(cmt?.createAt)).format(
+                                "HH:mm:ss DD/MM/YYYY",
+                              )}
+                          </td>
+
+                          <td className="d-flex align-items-center">
+                            <img alt='avatar' src={teacherMap[cmt.authorId]?.avatar} className='comment-avatar' />
+                            <div className="fw-semibold text-green-dark">
+                              {teacherMap[cmt.authorId]?.fullName}
+                            </div>
+                          </td>
+
+                          <td>{cmt.content}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+            <div className="d-flex gap-2 justify-content-end mt-3">
+              <button
+                className="btn action-btn-soft"
+                onClick={() => setHistoryComment(false)}
+              >
+                Hủy
+              </button>
+              {
+                ["Phó Giám đốc", "Giám đốc"].includes(
+                  user?.position as string,
+                ) &&
+
+                <button
+                  className="btn action-btn-soft"
+                  onClick={() => {
+                    setHistoryComment(false)
+                    setShowFeedback(true)
+                  }}
+                >
+                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                  Góp ý
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      )}
+
       {isPending && showFeedback && (
         <div className="custom-modal-backdrop">
           <div className="custom-modal">
@@ -542,7 +611,7 @@ export default function PlanDetailBootstrapGreen() {
                 className="btn action-btn-primary"
                 onClick={disableComment ? undefined : handleSaveComment}
                 disabled={
-                  !text.trim() || text === plan.comment?.split("@Js@")[1]
+                  !text.trim() || text === myComments[0]?.content
                 }
               >
                 <i className="bi bi-send-check-fill me-2" />

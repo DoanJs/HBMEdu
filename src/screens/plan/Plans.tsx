@@ -124,7 +124,7 @@ export default function ApprovedPlansBootstrapGreen() {
                   <img
                     className="plan-avatar"
                     src={teacherMap[plan.authorId]?.avatar}
-                    alt=""
+                    alt="avatar"
                   />
                   <span>
                     {teacherMap[plan.authorId]?.fullName}</span>
