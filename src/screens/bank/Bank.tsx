@@ -6,7 +6,7 @@ import LoadingOverlay from "../../components/LoadingOverLay";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
-import { activeCategoryDefault, getCurrentMonth } from "../../constants/info";
+import { activeCategoryDefault } from "../../constants/info";
 import { showUIIconTarget } from "../../constants/showUIIconTarget";
 import { PlanTaskModel, ReportTaskModel, TargetModel } from "../../models";
 import { CartModel } from "../../models/CartModel";
@@ -174,56 +174,6 @@ function CategoryCard({
   );
 }
 
-function GoalCard({ goal, checked, onToggle, planTasks }: any) {
-  const isSelectedTarget = () => {
-    let isSelected: boolean = false;
-    const index = planTasks.findIndex(
-      (planTask: PlanTaskModel) => planTask.targetId === goal.id,
-    );
-    if (index !== -1) {
-      isSelected = true;
-    } else {
-      isSelected = false;
-    }
-
-    return isSelected;
-  };
-
-  return (
-    <article className={`goal-card ${checked ? "selected" : ""}`}>
-      <div className="d-flex align-items-start justify-content-between gap-3">
-        <div className="min-w-0">
-          <div className="d-flex flex-wrap gap-2 mb-2">
-            <span className="goal-age">Level: {goal.level}</span>
-          </div>
-          <h3
-            className={`goal-title ${isSelectedTarget() && "fst-italic text-muted fs-6 fw-normal"}`}
-          >
-            {goal.name}
-          </h3>
-        </div>
-        <label className="goal-check">
-          <input type="checkbox" checked={checked} onChange={onToggle} />
-          <span>
-            <i className="bi bi-check-lg" />
-          </span>
-        </label>
-      </div>
-
-      <div className="d-flex justify-content-between align-items-center mt-3 pt-3 border-top-soft">
-        <button
-          className={`btn add-goal-btn ${checked ? "added" : ""}`}
-          onClick={onToggle}
-        >
-          <i
-            className={`bi ${checked ? "bi-cart-check-fill" : "bi-cart-plus-fill"} me-2`}
-          />
-          {checked ? "Bỏ chọn" : "Chọn mục tiêu"}
-        </button>
-      </div>
-    </article>
-  );
-}
 
 export default function GoalBankBootstrapGreen() {
   const { setSelectNavbar } = useSelectNavbarStore();
@@ -280,8 +230,6 @@ export default function GoalBankBootstrapGreen() {
     });
   }, [targets, activeCategory, keyword]);
 
-  const selectedGoals = targets.filter((goal) => selectedIds.has(goal.id));
-
   const toggleGoal = async (target: TargetModel) => {
     if (!user || !child || isLoading) return;
 
@@ -315,7 +263,7 @@ export default function GoalBankBootstrapGreen() {
         intervention: "",
         childId: child.id,
         teacherIds: child.teacherIds,
-        author: user.id,
+        authorId: user.id,
 
         createAt: serverTimestamp(),
         updateAt: serverTimestamp(),
@@ -557,11 +505,10 @@ export default function GoalBankBootstrapGreen() {
                               <td>
                                 <label
                                   htmlFor={`goal-${goal.id}`}
-                                  className={`cursor-pointer mb-0 ${
-                                    isSelectedTarget
-                                      ? "fst-italic text-green-dark"
-                                      : ""
-                                  }`}
+                                  className={`cursor-pointer mb-0 ${isSelectedTarget
+                                    ? "fst-italic text-green-dark"
+                                    : ""
+                                    }`}
                                 >
                                   {goal.name}
                                 </label>

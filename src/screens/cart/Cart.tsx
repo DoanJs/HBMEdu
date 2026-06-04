@@ -1,5 +1,5 @@
 import { httpsCallable } from "firebase/functions";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SpaceComponent } from "../../components";
 import LoadingOverlay from "../../components/LoadingOverLay";
@@ -88,6 +88,75 @@ function GoalCartItem({ cart }: any) {
     </tr>
   );
 }
+function GoalCartCard({ cart }: any) {
+  const { fields } = useFieldStore();
+  const { interventions } = useInterventionStore();
+  const { targets } = useTargetStore();
+  const { removeCart, editCart } = useCartStore();
+
+  const handleSelectIntervention = (val: string) => {
+    editCart(cart.id, { ...cart, intervention: val });
+  };
+
+  return (
+    <article className="goal-cart-card">
+      <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div className="min-w-0">
+          <div className="d-flex flex-wrap gap-2 mb-2">
+            <span className="goal-area">
+              <i className="bi bi-flower2 me-1" />
+              {convertTargetField(cart.targetId, targets, fields).nameField}
+            </span>
+            <span className="goal-level">Level: {cart.level}</span>
+
+          </div>
+          <h3 className="goal-title">{cart.name}</h3>
+          <div className="goal-description-card">
+            <div className="goal-description-label">
+              <i className="bi bi-card-text me-2" />
+              Mô tả
+            </div>
+
+            <div className="goal-description-content">
+              {cart.content || "Chưa có mô tả cho mục tiêu này. Liên hệ Admin"}
+            </div>
+          </div>
+
+          <div className="row g-2 mt-2">
+            <div className="col-12 col-md-12">
+              <select
+                className="form-select"
+                value={cart.intervention}
+                onChange={(val) => handleSelectIntervention(val.target.value)}
+              >
+                <option value="">Chọn mức độ hỗ trợ</option>
+                {interventions.map((_) => (
+                  <option value={_.name} key={_.id}>
+                    {_.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+        <button
+          className="btn remove-btn"
+          onClick={() => {
+            removeCart(cart.id);
+            deleteDocData({
+              nameCollect: "carts",
+              id: cart.id,
+              metaDoc: "carts",
+            });
+          }}
+          aria-label="Xóa mục tiêu"
+        >
+          <i className="bi bi-trash3-fill" />
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export default function GoalCartBootstrapGreen() {
   const navigate = useNavigate();
@@ -101,6 +170,18 @@ export default function GoalCartBootstrapGreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
+  const { fields } = useFieldStore()
+  const { interventions } = useInterventionStore();
+
+  const fieldMap = useMemo(() => {
+    const map: any = {};
+
+    fields.forEach((field) => {
+      map[field.id] = field.name;
+    });
+
+    return map;
+  }, [fields]);
 
   useEffect(() => {
     if (carts.length > 0) {
@@ -121,6 +202,10 @@ export default function GoalCartBootstrapGreen() {
       setTitle(plan.title);
     }
   }, [plan]);
+
+  const groupedCarts = useMemo(() => {
+    return groupArrayWithField(carts, "fieldId");
+  }, [carts]);
 
   const handleSaveCart = () => {
     setIsLoading(true);
@@ -243,38 +328,49 @@ export default function GoalCartBootstrapGreen() {
 
         <div className="row g-4">
           <div className="col-12 col-xl-9">
-            {carts.length > 0 ? (
-                <div className="table-responsive cart-table-wrap">
-                  <table className="table cart-table align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th className="area-cell">Lĩnh vực</th>
-                        <th className="goal-cell">Mục tiêu</th>
-                        <th className="content-cell">Nội dung</th>
-                        <th className="support-cell">Mức độ hỗ trợ</th>
-                        <th className="action-cell">Hành động</th>
-                      </tr>
-                    </thead>
+            {carts.length > 0 && (
+              <div className="table-responsive cart-table-wrap">
+                <table className="table cart-table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th className="area-cell">Lĩnh vực</th>
+                      <th className="goal-cell">Mục tiêu</th>
+                      <th className="content-cell">Nội dung</th>
+                      <th className="support-cell">Mức độ hỗ trợ</th>
+                      <th className="action-cell">Hành động</th>
+                    </tr>
+                  </thead>
 
-                    <tbody>
-                      {carts.length > 0 &&
-                        groupArrayWithField(carts, "fieldId").map(
-                          (_, index) => (
-                            <GoalCartItem
-                              key={`goal-cart-${_.id}-${index}`}
-                              cart={_}
-                            />
-                          ),
-                        )}
-                    </tbody>
-                  </table>
-                </div>
-            ) : (
-              <div className="empty-cart">
-                <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
-                Không có mục tiêu phù hợp trong giỏ.
+                  <tbody>
+                    {carts.length > 0 &&
+                      groupedCarts.map(
+                        (_) => (
+                          <GoalCartItem
+                            key={_.id}
+                            cart={_}
+                          />
+                        ),
+                      )}
+                  </tbody>
+                </table>
               </div>
             )}
+
+            {carts.length > 0 && (
+              <div className="row g-3 g-xl-4 cart-mobile-wrap">
+                {carts.length > 0 &&
+                  groupedCarts.map((cart) => (
+                    <div className="col-12 col-lg-12" key={cart.id}>
+                      <GoalCartCard cart={cart} />
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {carts.length === 0 && <div className="empty-cart">
+              <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
+              Không có mục tiêu phù hợp trong giỏ.
+            </div>}
           </div>
 
           <div className="col-12 col-xl-3">
@@ -338,3 +434,196 @@ export default function GoalCartBootstrapGreen() {
     </>
   );
 }
+
+{/* <div className="row g-4">
+          <div className="col-12 col-xl-9">
+            {carts.length > 0 ? (
+              <div className="row g-3 g-xl-4">
+                {carts.length > 0 &&
+                  groupArrayWithField(carts, "fieldId").map((cart) => (
+                    <div className="col-12 col-lg-12" key={cart.id}>
+                      <GoalCartCard cart={cart} />
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="empty-cart">
+                <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
+                Không có mục tiêu phù hợp trong giỏ.
+              </div>
+            )}
+          </div> */}
+
+// function GoalCartCard({ cart }: any) {
+//   const { fields } = useFieldStore();
+//   const { interventions } = useInterventionStore();
+//   const { targets } = useTargetStore();
+//   // const { suggests } = useSuggestStore();
+//   const { removeCart, editCart } = useCartStore();
+//   const [type, setType] = useState("");
+//   const [text, setText] = useState("");
+//   const [suggest, setSuggest] = useState<SuggestModel>();
+
+//   useEffect(() => {
+//     if (cart && cart.content) {
+//       setText(cart.content);
+//       const index = suggests.findIndex(
+//         (suggest) => suggest.name === cart.content,
+//       );
+//       if (index !== -1) {
+//         setSuggest(suggests[index]);
+//         setType("Gợi ý");
+//       } else {
+//         setType("Ý khác");
+//       }
+//     }
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [cart]);
+
+//   useEffect(() => {
+//     if (type === "Ý khác" && text) {
+//       editCart(cart.id, { ...cart, content: text });
+//     }
+//     if (type === "Gợi ý" && suggest) {
+//       editCart(cart.id, { ...cart, content: suggest.name });
+//     }
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [text, suggest]);
+
+//   const handleSelectIntervention = (val: string) => {
+//     editCart(cart.id, { ...cart, intervention: val });
+//   };
+//   const handleSuggestsWithField = (fieldId: string) => {
+//     const items = suggests.filter((suggest) => suggest.fieldId === fieldId);
+//     return items;
+//   };
+
+//   return (
+//     <article className="goal-cart-card">
+//       <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+//         <div className="min-w-0">
+//           <div className="d-flex flex-wrap gap-2 mb-2">
+//             <span className="goal-area">
+//               <i className="bi bi-flower2 me-1" />
+//               {convertTargetField(cart.targetId, targets, fields).nameField}
+//             </span>
+//             <span className="goal-level">Level: {cart.level}</span>
+
+//           </div>
+//           <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+//             <span className="goal-area">
+//               <i className="bi bi-flower2 me-1" />
+//               {convertTargetField(cart.targetId, targets, fields).nameField}
+//             </span>
+
+//             <span className="goal-level">
+//               Level: {cart.level}
+//             </span>
+
+//             <select
+//               className="form-select form-select-sm intervention-select"
+//               value={cart.intervention}
+//               onChange={(e) => handleSelectIntervention(e.target.value)}
+//             >
+//               <option value="">Mức độ hỗ trợ</option>
+//               {interventions.map((item) => (
+//                 <option value={item.name} key={item.id}>
+//                   {item.name}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//           <h3 className="goal-title">{cart.name}</h3>
+//           <div className="goal-description-card">
+//             <div className="goal-description-label">
+//               <i className="bi bi-card-text me-2" />
+//               Mô tả
+//             </div>
+
+//             <div className="goal-description-content">
+//               {cart.content || "Chưa có mô tả cho mục tiêu này. Liên hệ Admin"}
+//             </div>
+//           </div>
+
+//           <div className="row g-2 mt-2">
+//             <div className="col-12 col-md-12">
+//               <select
+//                 className="form-select"
+//                 value={cart.intervention}
+//                 onChange={(val) => handleSelectIntervention(val.target.value)}
+//               >
+//                 <option value="">Chọn mức độ hỗ trợ</option>
+//                 {interventions.map((_) => (
+//                   <option value={_.name} key={_.id}>
+//                     {_.name}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+//           </div>
+//         </div>
+//         <button
+//           className="btn remove-btn"
+//           onClick={() => {
+//             removeCart(cart.id);
+//             deleteDocData({
+//               nameCollect: "carts",
+//               id: cart.id,
+//               metaDoc: "carts",
+//             });
+//           }}
+//           aria-label="Xóa mục tiêu"
+//         >
+//           <i className="bi bi-trash3-fill" />
+//         </button>
+//       </div>
+
+
+//       <div className="d-flex flex-wrap align-items-center mb-2">
+//         <button
+//           type="button"
+//           className="btn btn-success"
+//           onClick={() => setType("Gợi ý")}
+//         >
+//           Gợi ý
+//         </button>
+//         <SpaceComponent width={10} />
+//         <button
+//           type="button"
+//           className="btn btn-primary"
+//           onClick={() => setType("Ý khác")}
+//         >
+//           Ý khác
+//         </button>
+//       </div>
+
+//       <div>
+//         <SpaceComponent height={8} />
+//         {type === "Gợi ý" && (
+//           <Select<SuggestModel>
+//             getOptionLabel={(option) => option.name}
+//             getOptionValue={(option) => option.id.toString()}
+//             options={handleSuggestsWithField(cart.fieldId)}
+//             maxMenuHeight={sizes.height}
+//             onChange={(val: SingleValue<SuggestModel>) =>
+//               setSuggest(val as SuggestModel)
+//             }
+//             value={suggest}
+//           />
+//         )}
+
+//         {type === "Ý khác" && (
+//           <textarea
+//             value={text}
+//             onChange={(e) => setText(e.target.value)}
+//             className="form-control"
+//             placeholder="Nhập đánh giá"
+//             rows={5}
+//             cols={400}
+//             id="floatingTextarea2"
+//           ></textarea>
+//         )}
+//       </div>
+//     </article>
+//   );
+// }
