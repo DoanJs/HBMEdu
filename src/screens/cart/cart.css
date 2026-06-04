@@ -50,7 +50,7 @@ html, body, #root { min-height:100%; background:#dff7e8!important; } body{margin
 
 .cart-table {
   width: 100%;
-  min-width: 0 !important;
+  min-width: 900px;
   table-layout: fixed;
   margin-bottom: 0;
   --bs-table-bg: #fff;
@@ -94,6 +94,30 @@ html, body, #root { min-height:100%; background:#dff7e8!important; } body{margin
 
 .cart-table .action-cell {
   width: 8%;
+}
+/* Desktop + Tablet */
+.cart-table-wrap {
+  display: block;
+}
+
+.cart-mobile-wrap {
+  display: none;
+}
+
+/* Chỉ Mobile */
+@media (max-width: 767.98px) {
+  .cart-table-wrap {
+    display: none;
+  }
+
+  .cart-mobile-wrap {
+    display: flex;
+  }
+
+  .create-plan-panel {
+    position: static;
+    top: auto;
+  }
 }
 @media (min-width:992px){.app-sidebar{transform:none}.sidebar-backdrop{display:none}.app-main{margin-left:var(--sidebar-width);width:calc(100% - var(--sidebar-width))}}@media (max-width:575.98px){:root{--sidebar-width:min(88vw,320px)}.sidebar-inner{padding:20px 16px}.brand-logo{width:52px;height:52px}.logo-title{font-size:.76rem;max-width:185px}.action-btn-primary,.action-btn-soft{padding:10px 12px}.goal-cart-card{padding:15px}}
       

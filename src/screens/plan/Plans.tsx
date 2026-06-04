@@ -62,72 +62,66 @@ export default function ApprovedPlansBootstrapGreen() {
         to="../plandetail"
         onClick={() => setSelectNavbar("")}
         state={{ plan }} className="container-fluid py-4 text-decoration-none cursor-pointer">
-        <div className="row g-4">
-          <div
-            className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative"
-          >
-            <div className="plan-kh-badge">
-              <img
-                src={theme.icon}
-                alt=""
-                className="plan-kh-badge-img"
-              />
-            </div>
+        <div className="plan-kh-badge">
+          <img
+            src={theme.icon}
+            alt=""
+            className="plan-kh-badge-img"
+          />
+        </div>
+        <div
+          className="plan-kh-card"
+          style={{ background: theme.bg }}
+        >
+
+
+          <div className="plan-kh-glass" />
+          <div className="d-flex justify-content-between align-items-start">
             <div
-              className="plan-kh-card"
-              style={{ background: theme.bg }}
+              className="plan-kh-title"
+              style={{ color: theme.color }}
             >
+              {plan.type} {plan.title}
+            </div>
+
+            <span className="status-approved flex-shrink-0">
+              <i className="bi bi-patch-check-fill me-1" />
+              {plan.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
+            </span>
+          </div>
 
 
-              <div className="plan-kh-glass" />
-              <div className="d-flex justify-content-between align-items-start">
-                <div
-                  className="plan-kh-title"
-                  style={{ color: theme.color }}
-                >
-                  {plan.type} {plan.title}
-                </div>
+          <div className="plan-kh-info">
+            <i className="bi bi-send-check-fill icon-yellow" /> Ngày tạo:&ensp;
+            {typeof plan?.createAt === "number"
+              ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
+              : moment(handleTimeStampFirestore(plan?.createAt)).format(
+                "HH:mm:ss DD/MM/YYYY",
+              )}
+          </div>
 
-                <span className="status-approved flex-shrink-0">
-                  <i className="bi bi-patch-check-fill me-1" />
-                  {plan.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
-                </span>
-              </div>
+          <div className="plan-kh-info">
+            <i className="bi bi-calendar-heart icon-red" /> Ngày duyệt:&ensp;
+            {typeof plan?.updateAt === "number"
+              ? moment(plan?.updateAt).format("HH:mm:ss DD/MM/YYYY")
+              : moment(handleTimeStampFirestore(plan?.updateAt)).format(
+                "HH:mm:ss DD/MM/YYYY",
+              )}
+          </div>
 
+          <div className="plan-kh-info">
+            <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện :
+          </div>
 
-              <div className="plan-kh-info">
-                <i className="bi bi-send-check-fill icon-yellow" /> Ngày tạo:&ensp;
-                {typeof plan?.createAt === "number"
-                  ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                  : moment(handleTimeStampFirestore(plan?.createAt)).format(
-                    "HH:mm:ss DD/MM/YYYY",
-                  )}
-              </div>
-
-              <div className="plan-kh-info">
-                <i className="bi bi-calendar-heart icon-red" /> Ngày duyệt:&ensp;
-                {typeof plan?.updateAt === "number"
-                  ? moment(plan?.updateAt).format("HH:mm:ss DD/MM/YYYY")
-                  : moment(handleTimeStampFirestore(plan?.updateAt)).format(
-                    "HH:mm:ss DD/MM/YYYY",
-                  )}
-              </div>
-
-              <div className="plan-kh-info">
-                <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện :
-              </div>
-
-              <div className="plan-kh-footer">
-                <div className="plan-teacher-box">
-                  <img
-                    className="plan-avatar"
-                    src={teacherMap[plan.authorId]?.avatar}
-                    alt="avatar"
-                  />
-                  <span>
-                    {teacherMap[plan.authorId]?.fullName}</span>
-                </div>
-              </div>
+          <div className="plan-kh-footer">
+            <div className="plan-teacher-box">
+              <img
+                className="plan-avatar"
+                src={teacherMap[plan.authorId]?.avatar || '/HBMEdu-icon-192x192.png'}
+                alt="avatar"
+              />
+              <span>
+                {teacherMap[plan.authorId]?.fullName}</span>
             </div>
           </div>
         </div>
@@ -139,7 +133,7 @@ export default function ApprovedPlansBootstrapGreen() {
 
   return (
     <>
-      <section className="container-fluid px-3 px-md-4 px-xl-4 py-4 py-xl-4">
+      <section className="container-fluid px-3 px-md-4 px-xl-4 py-4 py-xl-4 mb-4">
         <div className="row align-items-start g-3 mb-3">
           <div className="col-12 col-lg">
             <h2 className="page-title fw-black text-green-dark mb-2">
@@ -170,7 +164,7 @@ export default function ApprovedPlansBootstrapGreen() {
           </div>
         </div>
 
-        <div className="page-panel p-3 p-md-4 mb-5">
+        <div className="page-panel p-3 p-md-4">
           <div className="row g-3 align-items-center">
             <div className="col-12 col-lg-12">
               <div className="search-box">
@@ -194,7 +188,9 @@ export default function ApprovedPlansBootstrapGreen() {
         ) : (
           <div className="row g-3 g-xl-4">
             {filteredPlans.map((plan) => (
-              <PlanCard plan={plan} key={plan.id} />
+              <div className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative">
+                <PlanCard plan={plan} key={plan.id} />
+              </div>
             ))}
           </div>
         )}
