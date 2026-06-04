@@ -1,4 +1,4 @@
-import { where } from "firebase/firestore";
+import { orderBy, where } from "firebase/firestore";
 import { Message } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ import { CENTER_NAME, handleCommentTotal } from "../../constants/info";
 import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import {
+  CommentModel,
   FieldModel,
   InterventionModel,
   PlanModel,
@@ -31,6 +32,7 @@ import { SuggestModel } from "../../models/SuggestModel";
 import {
   useCartStore,
   useChildStore,
+  useCommentStore,
   useFieldStore,
   useInterventionStore,
   usePlanStore,
@@ -113,6 +115,7 @@ export default function DashboardBootstrapGreen() {
   const { plans, setPlans } = usePlanStore();
   const { reports, setReports } = useReportStore();
   const { setReportSaveds } = useReportSavedStore();
+  const { setComments } = useCommentStore();
   const { setTotalPlanTasks } = useTotalPlanTaskStore();
   const { setTotalReportTasks } = useTotalReportTaskStore();
   const { carts, setCarts } = useCartStore();
@@ -173,6 +176,21 @@ export default function DashboardBootstrapGreen() {
       nameCollect: "reports",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
+  const { data: data_comments, loading: loading_comments } =
+    useFirestoreWithMetaCondition({
+      key: "commentsCache",
+      metaDoc: "comments",
+      id: user?.id,
+      nameCollect: "comments",
+      condition: [where("childId", '==', id), orderBy('createAt', 'desc')],
+    });
+
+  useEffect(() => {
+    if (!loading_comments) {
+      setComments(data_comments as CommentModel[]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_comments, loading_comments]);
 
   useEffect(() => {
     if (!loading_interventions) {
@@ -194,6 +212,7 @@ export default function DashboardBootstrapGreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_plans, loading_plans]);
+
   useEffect(() => {
     if (!loading_carts) {
       const items = data_carts as CartModel[];

@@ -1,4 +1,4 @@
-import { doc, getDoc, where } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Message } from "iconsax-react";
 import moment from "moment";
@@ -21,6 +21,7 @@ import { db, functions } from "../../firebase.config";
 import { PlanTaskModel, ReportTaskModel, UserModel } from "../../models";
 import {
   useChildStore,
+  useCommentStore,
   useFieldStore,
   useReportStore,
   useSelectNavbarStore,
@@ -30,6 +31,7 @@ import {
 } from "../../zustand";
 import "./reportdetail.css";
 import ReportItem from "./ReportItem";
+import { addDocData } from "../../constants/firebase/addDocData";
 
 function ReportMobileCard({
   index,
@@ -152,15 +154,23 @@ export default function ReportDetailBootstrapGreen() {
   const { setSelectNavbar } = useSelectNavbarStore();
   const isPending = report.status === "pending";
   const [showDelete, setShowDelete] = useState(false);
+  const [historyComment, setHistoryComment] = useState(false);
   const { removeReport } = useReportStore();
+  const { addComment, comments } = useCommentStore()
+
+  const myComments = comments.filter(cmt => cmt._id === report.id) || []
+
+  const teacherMap = useMemo(() => {
+    const map: any = {};
+    teachers.forEach((t) => {
+      map[t.id] = t;
+    });
+    return map;
+  }, [teachers]);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (report) {
-      if (report.comment) {
-        setIsComment(true);
-        setText(report.comment.split("@Js@")[1]);
-      }
       getDocsData({
         nameCollect: "reportTasks",
         condition: [
@@ -173,7 +183,15 @@ export default function ReportDetailBootstrapGreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report]);
   useEffect(() => {
-    if (text !== report.comment?.split("@Js@")[1]) {
+    if (myComments) {
+      if (myComments.length > 0) {
+        setIsComment(true)
+      }
+    }
+    // eslint-disable-next-line
+  }, [myComments]);
+  useEffect(() => {
+    if (text !== myComments[0]?.content) {
       setDisableComment(false);
     } else {
       setDisableComment(true);
@@ -269,22 +287,41 @@ export default function ReportDetailBootstrapGreen() {
   const handleSaveComment = async () => {
     setShowFeedback(false);
     setIsLoading(true);
-    const indexReport = reports.findIndex((r) => r.id === report.id);
-    editReport(report.id, {
-      ...reports[indexReport],
-      comment: text ? `${user?.fullName}@Js@${text}` : "",
-      updateById: user?.id,
-    });
+    const newComment = {
+      _id: report.id,
+      authorId: user?.id || '',
+      childId: child?.id || '',
+      content: text,
+      createAt: Date.now(),
+      id: "",
+      teacherIds: report.teacherIds,
+      type: 'BC',
+      updateAt: Date.now()
+    }
 
+    addComment(newComment)
+
+    await addDocData({
+      nameCollect: 'comments',
+      value: { ...newComment, createAt: serverTimestamp(), updateAt: serverTimestamp(), },
+      metaDoc: 'comments',
+    })
+
+    await updateDoc(doc(db, "Meta", 'comments'), {
+      lastUpdated: serverTimestamp(),
+    });
     await updateDocData({
       nameCollect: "reports",
       id: report.id,
       metaDoc: "reports",
       valueUpdate: {
-        comment: text !== "" ? `${user?.fullName}@Js@${text}` : "",
+        comment: `${text}-${user?.id}-${user?.fullName}`,
         updateById: user?.id,
       },
     });
+
+
+    setText("")
     setIsComment(true);
     setIsLoading(false);
     setDisableComment(true);
@@ -440,8 +477,8 @@ export default function ReportDetailBootstrapGreen() {
                     {typeof report?.createAt === "number"
                       ? moment(report?.createAt).format("HH:mm:ss DD/MM/YYYY")
                       : moment(
-                          handleTimeStampFirestore(report?.createAt),
-                        ).format("HH:mm:ss DD/MM/YYYY")}
+                        handleTimeStampFirestore(report?.createAt),
+                      ).format("HH:mm:ss DD/MM/YYYY")}
                   </span>
                 </div>
                 <div className="mini-info">
@@ -460,22 +497,8 @@ export default function ReportDetailBootstrapGreen() {
           </div>
         </div>
 
-        {isPending && isComment && (
-          <div className="plan-hero mb-4 feedback-box">
-            <Message color="#ef4444" size={26} variant="Bold" />
-
-            <div className="ms-2">
-              <span className="fw-bold text-danger-custom">
-                Góp ý từ cô {report.comment.split("@Js@")[0] || user?.fullName}:
-              </span>
-
-              <div className="mt-1 feedback-content">{text}</div>
-            </div>
-          </div>
-        )}
-
         <div className="report-detail-panel p-3 p-md-4">
-          {/* <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-3">
             <div>
               <h3 className="h5 fw-black text-green-dark mb-1">
                 Bảng chi tiết báo cáo
@@ -484,53 +507,16 @@ export default function ReportDetailBootstrapGreen() {
                 Đánh giá từng mục tiêu trong kế hoạch tháng
               </div>
             </div>
-            <span className="status-approved">
-              <i className="bi bi-list-check me-2" />
-              {reportTasks.length} mục tiêu
-            </span>
-          </div> */}
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-3">
-            <div>
-              <h3 className="h5 fw-black text-green-dark mb-1">
-               Bảng chi tiết báo cáo
-              </h3>
-              <div className="small text-green-muted fw-semibold">
-                 Đánh giá từng mục tiêu trong kế hoạch tháng
-              </div>
-            </div>
 
             <div className="text-md-end">
               <span className="status-approved">
                 <i className="bi bi-list-check me-2" />
-              {reportTasks.length} mục tiêu
+                {reportTasks.length} mục tiêu
               </span>
             </div>
           </div>
 
-          <div className="report-table-wrap">
-            {/* <table className="table report-table align-middle">
-              <thead>
-                <tr>
-                  <th>Lĩnh vực</th>
-                  <th>Mục tiêu</th>
-                  <th>Mức độ hỗ trợ</th>
-                  <th>Nội dung</th>
-                  <th>Tổng kết</th>
-                </tr>
-              </thead>
-              <tbody>
-                {groupedReportTasks.map((item) => (
-                  <ReportItem
-                    key={item.id}
-                    reportTask={item}
-                    setDisable={setDisable}
-                    reportTasks={reportTasks}
-                    onSetReportTasks={setReportTasks}
-                    status={report.status}
-                  />
-                ))}
-              </tbody>
-            </table> */}
+          <div className="report-table-wrap mb-3">
             <div className="table-responsive">
               <table className="table report-table align-middle mb-0">
                 <thead>
@@ -575,19 +561,49 @@ export default function ReportDetailBootstrapGreen() {
             ))}
           </div>
 
+          {isPending && isComment && (
+            <div className='d-flex align-items-start justify-content-between comment-total'>
+              <div className="plan-hero feedback-box flex-grow-1 comment-content me-2">
+                <Message color="#ef4444" size={26} variant="Bold" />
+
+                <div className="ms-2">
+                  <span className="text-danger-custom">
+                    Góp ý từ cô <b>{teacherMap[myComments[0]?.authorId]?.fullName || user?.fullName}</b> vào lúc {
+                      typeof myComments[0]?.createAt === "number"
+                        ? moment(myComments[0]?.createAt).format("HH:mm:ss DD/MM/YYYY")
+                        : moment(handleTimeStampFirestore(myComments[0]?.createAt)).format(
+                          "HH:mm:ss DD/MM/YYYY",
+                        )
+                    }:
+                  </span>
+
+                  <div className="mt-1 feedback-content">{myComments[0]?.content}</div>
+                </div>
+              </div>
+
+              <button
+                className="btn action-btn-comment flex-shrink-0"
+                onClick={() => setHistoryComment(true)}
+              >
+                <i className="bi bi-send-check-fill me-2" />
+                Lịch sử góp ý
+              </button>
+            </div>
+          )}
+
           {isPending && (
             <div className="pending-actions mt-3 border-top-soft">
               {["Phó Giám đốc", "Giám đốc"].includes(
                 user?.position as string,
               ) && (
-                <button
-                  className="btn action-btn-soft"
-                  onClick={() => setShowFeedback(true)}
-                >
-                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
-                  Góp ý
-                </button>
-              )}
+                  <button
+                    className="btn action-btn-soft"
+                    onClick={() => setShowFeedback(true)}
+                  >
+                    <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                    Góp ý
+                  </button>
+                )}
               {user?.role === "admin" && (
                 <button className="btn approve-btn" onClick={handleApproved}>
                   <i className="bi bi-check-circle-fill me-2" />
@@ -614,6 +630,78 @@ export default function ReportDetailBootstrapGreen() {
           )}
         </div>
       </section>
+
+      {isPending && historyComment && (
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal-history-comment">
+            <h5 className="fw-black text-green-dark mb-2">Lịch sử góp ý</h5>
+            <p className="text-green-muted small">
+              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên môn.
+            </p>
+            <div className="table-responsive comment-table-wrap">
+              <table className="table comment-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th className="area-cell">Thời gian</th>
+                    <th className="goal-cell">Giáo viên</th>
+                    <th className="content-cell">Nội dung</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {myComments.length > 0 &&
+                    myComments.map((cmt, index) => {
+                      return (
+                        <tr key={`cmt-${cmt.id}-${index}`}>
+                          <td>
+                            {typeof cmt?.createAt === "number"
+                              ? moment(cmt?.createAt).format("HH:mm:ss DD/MM/YYYY")
+                              : moment(handleTimeStampFirestore(cmt?.createAt)).format(
+                                "HH:mm:ss DD/MM/YYYY",
+                              )}
+                          </td>
+
+                          <td className="d-flex align-items-center">
+                            <img alt='avatar' src={teacherMap[cmt.authorId]?.avatar} className='comment-avatar' />
+                            <div className="fw-semibold text-green-dark">
+                              {teacherMap[cmt.authorId]?.fullName}
+                            </div>
+                          </td>
+
+                          <td>{cmt.content}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+            <div className="d-flex gap-2 justify-content-end mt-3">
+              <button
+                className="btn action-btn-soft"
+                onClick={() => setHistoryComment(false)}
+              >
+                Hủy
+              </button>
+              {
+                ["Phó Giám đốc", "Giám đốc"].includes(
+                  user?.position as string,
+                ) &&
+
+                <button
+                  className="btn action-btn-soft"
+                  onClick={() => {
+                    setHistoryComment(false)
+                    setShowFeedback(true)
+                  }}
+                >
+                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                  Góp ý
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      )}
 
       {isPending && showFeedback && (
         <div className="custom-modal-backdrop">

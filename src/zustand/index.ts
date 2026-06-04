@@ -2,6 +2,7 @@ import useCartEditStore from "./useCartEditStore";
 import useCartStore from "./useCartStore";
 import useChildrenStore from "./useChildrenStore";
 import useChildStore from "./useChildStore";
+import useCommentStore from "./useCommentStore";
 import useFieldStore from "./useFieldStore";
 import useInterventionStore from "./useInterventionStore";
 import usePlanStore from "./usePlanStore";
@@ -32,5 +33,7 @@ export {
   useTargetStore,
   useTeacherStore,
   useTotalPlanTaskStore,
-  useUserStore,useTotalReportTaskStore
+  useUserStore,
+  useTotalReportTaskStore,
+  useCommentStore
 };

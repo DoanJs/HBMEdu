@@ -169,6 +169,89 @@
     0 24px 40px rgba(0,0,0,.12);
 }
 
+
+/* ==================================================
+   TABLE
+================================================== */
+
+.report-table-wrap {
+  max-height: 650px;
+  overflow: auto;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+}
+
+.report-table {
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: fixed;
+  --bs-table-bg: #fff;
+}
+
+.report-table th,
+.report-table td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.report-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  padding: 14px 12px;
+
+  font-size: 0.86rem;
+  font-weight: 900;
+
+  color: var(--green-900);
+  background: #f0fdf4 !important;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.report-table td {
+  padding: 14px 12px;
+  line-height: 1.55;
+  vertical-align: top;
+  color: #334155;
+}
+
+.report-table .area-cell {
+  width: 10%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.report-table .goal-cell {
+  width: 30%;
+}
+
+.report-table .support-cell {
+  width: 10%;
+}
+
+.report-table .content-cell {
+  width: 15%;
+}
+.report-table .observe-cell {
+  width: 35%;
+}
+
+.comment-table .area-cell {
+  width: 15%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.comment-table .goal-cell {
+  width: 30%;
+}
+
+.comment-table .content-cell {
+  width: 55%;
+}
 /* ======================================================
    GLASS EFFECT
 ====================================================== */
