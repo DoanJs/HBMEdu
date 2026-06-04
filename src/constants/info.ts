@@ -8,6 +8,10 @@ export interface PlanCardTheme {
 // variables:
 export const CENTER_NAME =
   "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI";
+export const FIRST_NAME =
+  "TRUNG TÂM CAN THIỆP SỚM";
+export const LAST_NAME =
+  "HOA BAN MAI";
 export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
 export const indexedDBName = "QXEdu";
 export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile

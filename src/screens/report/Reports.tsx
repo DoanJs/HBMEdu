@@ -158,7 +158,7 @@ export default function ApprovedReportBootstrapGreen() {
           </div>
         </div>
 
-        <div className="page-panel p-3 p-md-4">
+        <div className="page-panel p-3 p-md-4 mb-3">
           <div className="row g-3 align-items-center">
             <div className="col-12 col-lg-12">
               <div className="search-box">

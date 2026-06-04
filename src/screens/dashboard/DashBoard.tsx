@@ -307,13 +307,13 @@ export default function DashboardBootstrapGreen() {
           <div className="sidebar-inner d-flex flex-column h-100">
             <div className="d-flex align-items-center justify-content-between mb-4">
               <Logo type="dashboard" />
-              <button
+              {/* <button
                 className="btn close-menu d-lg-none"
                 onClick={onClose}
                 aria-label="Đóng menu"
               >
                 <i className="bi bi-x-lg" />
-              </button>
+              </button> */}
             </div>
 
             <nav className="nav flex-column gap-2">
