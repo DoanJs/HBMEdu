@@ -1,5 +1,5 @@
 import { httpsCallable } from "firebase/functions";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SpaceComponent } from "../../components";
 import LoadingOverlay from "../../components/LoadingOverLay";
@@ -121,6 +121,10 @@ export default function GoalCartBootstrapGreen() {
       setTitle(plan.title);
     }
   }, [plan]);
+
+  const groupedCarts = useMemo(() => {
+    return groupArrayWithField(carts, "fieldId");
+  }, [carts]);
 
   const handleSaveCart = () => {
     setIsLoading(true);
@@ -244,31 +248,31 @@ export default function GoalCartBootstrapGreen() {
         <div className="row g-4">
           <div className="col-12 col-xl-9">
             {carts.length > 0 ? (
-                <div className="table-responsive cart-table-wrap">
-                  <table className="table cart-table align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th className="area-cell">Lĩnh vực</th>
-                        <th className="goal-cell">Mục tiêu</th>
-                        <th className="content-cell">Nội dung</th>
-                        <th className="support-cell">Mức độ hỗ trợ</th>
-                        <th className="action-cell">Hành động</th>
-                      </tr>
-                    </thead>
+              <div className="table-responsive cart-table-wrap">
+                <table className="table cart-table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th className="area-cell">Lĩnh vực</th>
+                      <th className="goal-cell">Mục tiêu</th>
+                      <th className="content-cell">Nội dung</th>
+                      <th className="support-cell">Mức độ hỗ trợ</th>
+                      <th className="action-cell">Hành động</th>
+                    </tr>
+                  </thead>
 
-                    <tbody>
-                      {carts.length > 0 &&
-                        groupArrayWithField(carts, "fieldId").map(
-                          (_, index) => (
-                            <GoalCartItem
-                              key={`goal-cart-${_.id}-${index}`}
-                              cart={_}
-                            />
-                          ),
-                        )}
-                    </tbody>
-                  </table>
-                </div>
+                  <tbody>
+                    {carts.length > 0 &&
+                      groupedCarts.map(
+                        (_) => (
+                          <GoalCartItem
+                            key={_.id}
+                            cart={_}
+                          />
+                        ),
+                      )}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="empty-cart">
                 <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
