@@ -359,7 +359,7 @@ export default function GoalBankBootstrapGreen() {
                   className="form-control search-input"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Tìm mục tiêu, level..."
+                  placeholder="Tìm mục tiêu, mức độ (level: 1)..."
                 />
               </div>
             </div>

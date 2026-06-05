@@ -45,7 +45,6 @@ export default function ApprovedReportBootstrapGreen() {
 
       const content = `
       ${item.title ?? ""}
-      ${item.id ?? ""}
       ${teacherName}
       ${createdTime}
       ${updatedTime}
@@ -158,7 +157,7 @@ export default function ApprovedReportBootstrapGreen() {
           </div>
         </div>
 
-        <div className="page-panel p-3 p-md-4 mb-3">
+        <div className="page-panel p-3 p-md-4 mb-2">
           <div className="row g-3 align-items-center">
             <div className="col-12 col-lg-12">
               <div className="search-box">
@@ -167,7 +166,7 @@ export default function ApprovedReportBootstrapGreen() {
                   className="form-control search-input"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Tìm mã báo cáo, tên báo cáo"
+                  placeholder="Tìm tên BC; Gv, thời gian thực hiện"
                 />
               </div>
             </div>

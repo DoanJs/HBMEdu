@@ -45,7 +45,6 @@ export default function ApprovedPlansBootstrapGreen() {
 
       const content = `
       ${item.title ?? ""}
-      ${item.id ?? ""}
       ${teacherName}
       ${createdTime}
       ${updatedTime}
@@ -164,7 +163,7 @@ export default function ApprovedPlansBootstrapGreen() {
           </div>
         </div>
 
-        <div className="page-panel p-3 p-md-4">
+        <div className="page-panel p-3 p-md-4 mb-2">
           <div className="row g-3 align-items-center">
             <div className="col-12 col-lg-12">
               <div className="search-box">
@@ -173,7 +172,7 @@ export default function ApprovedPlansBootstrapGreen() {
                   className="form-control search-input"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Tìm mã/tên kế hoạch, giáo viên thực hiện"
+                  placeholder="Tìm tên KH; Gv, thời gian thực hiện"
                 />
               </div>
             </div>
