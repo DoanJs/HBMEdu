@@ -166,7 +166,7 @@ export default function PendingApprovalBootstrapGreen() {
                   className="form-control search-input"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Tìm mã/tên kế hoạch, báo cáo; giáo viên, thời gian thực hiện"
+                  placeholder="Tìm tên KH/BC; Gv, thời gian thực hiện"
                 />
               </div>
             </div>

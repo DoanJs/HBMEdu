@@ -315,7 +315,7 @@ export default function ReportDetailBootstrapGreen() {
       id: report.id,
       metaDoc: "reports",
       valueUpdate: {
-        comment: `${text}-${user?.id}-${user?.fullName}`,
+        comment: text,
         updateById: user?.id,
       },
     });

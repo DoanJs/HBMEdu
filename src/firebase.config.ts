@@ -14,6 +14,17 @@ const firebaseConfig = {
   measurementId: "G-P113B6FJ95"
 };
 
+// config for hoabanmaiedu
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAH-J8M7ylfptetOma5PSHb8C9b6nG0dNo",
+//   authDomain: "hoabanmaiedu-23415.firebaseapp.com",
+//   projectId: "hoabanmaiedu-23415",
+//   storageBucket: "hoabanmaiedu-23415.firebasestorage.app",
+//   messagingSenderId: "953698484929",
+//   appId: "1:953698484929:web:a2a755f90af9f8d77f8a40",
+//   measurementId: "G-WJ8MJ6GHB3"
+// };
+
 // setLogLevel("debug");
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

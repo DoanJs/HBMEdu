@@ -537,7 +537,8 @@ body {
   }
 
   .brand-title {
-    max-width: 260px;
+    /* max-width: 260px; */
+    text-align: start;
 
     color: var(--green-900) !important;
 
