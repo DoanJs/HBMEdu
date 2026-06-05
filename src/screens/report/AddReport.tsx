@@ -64,7 +64,7 @@ function AddReportMobileCard({
       <div className="d-flex align-items-start justify-content-between gap-2 mb-3">
         <div className="min-w-0">
           <div className="d-flex align-items-center flex-wrap gap-2 mb-2">
-            <span className="goal-index">#{index + 1}</span>
+            <span className="goal-index">{index + 1}.</span>
             <span className="area-pill">{targetInfo.nameField}</span>
             <span className="goal-level">Level: {targetInfo.levelTarget}</span>
           </div>

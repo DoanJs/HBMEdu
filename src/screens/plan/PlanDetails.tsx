@@ -185,7 +185,7 @@ export default function PlanDetailBootstrapGreen() {
       id: plan.id,
       metaDoc: "plans",
       valueUpdate: {
-        comment: `${text}-${user?.id}-${user?.fullName}`,
+        comment: text,
         updateById: user?.id,
       },
     });
@@ -238,7 +238,11 @@ export default function PlanDetailBootstrapGreen() {
       removePlan(plan.id);
 
       handleToastSuccess(
-        `Đã xoá kế hoạch thành công cùng ${deleted.planTasks} chi tiết kế hoạch, ${deleted.reports} báo cáo, ${deleted.reportTasks} chi tiết báo cáo, ${deleted.reportSaveds} bản lưu báo cáo`,
+        `Đã xoá kế hoạch thành công cùng ${deleted.planTasks} chi tiết kế hoạch, 
+        ${deleted.reports} báo cáo, 
+        ${deleted.reportTasks} chi tiết báo cáo, 
+        ${deleted.reportSaveds} bản lưu báo cáo, 
+        ${deleted.comments} góp ý`,
       );
 
       navigate("../pending");
@@ -261,7 +265,7 @@ export default function PlanDetailBootstrapGreen() {
       <article className="goal-mobile-card">
         <div className="d-flex justify-content-between gap-3 mb-2">
           <div>
-            <span className="goal-index">#{index + 1}</span>
+            <span className="goal-index">{index + 1}.</span>
             <span className="area-pill ms-2 me-3">
               {
                 convertTargetField(goal.targetId, targets, fields).nameField

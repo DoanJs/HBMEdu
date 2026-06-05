@@ -265,7 +265,13 @@
 @media (max-width: 768px) {
   .approval-board {
     min-height: 100%;
-    padding: 24% 0;
+    padding: 24% 36px;
+  }
+}
+@media (max-width: 991.98px) {
+  .approval-board {
+    min-height: 100%;
+    padding: 24% 48px;
   }
 }
         @media (min-width:992px){.app-sidebar{transform:none}.sidebar-backdrop{display:none}.app-main{margin-left:var(--sidebar-width);width:calc(100% - var(--sidebar-width))}}@media (max-width:575.98px){:root{--sidebar-width:min(88vw,320px)}.sidebar-inner{padding:20px 16px}.brand-logo{width:52px;height:52px}.logo-title{font-size:.76rem;max-width:185px}.approval-type-box{width:64px;height:82px}.mini-info{padding:9px}.action-btn-primary,.action-btn-soft,.approve-btn,.reject-btn{padding:10px 12px}}

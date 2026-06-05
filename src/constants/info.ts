@@ -13,7 +13,7 @@ export const FIRST_NAME =
 export const LAST_NAME =
   "HOA BAN MAI";
 export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
-export const indexedDBName = "QXEdu";
+export const indexedDBName = "HBMEdu";
 export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile
 const planCardThemes = [
   {

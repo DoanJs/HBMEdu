@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FIRST_NAME, LAST_NAME } from "../constants/info";
+import { CENTER_NAME, FIRST_NAME, LAST_NAME } from "../constants/info";
 
 export default function Logo({ type }: { type: string }) {
   return (
@@ -14,8 +14,8 @@ export default function Logo({ type }: { type: string }) {
       </div>
 
       {/* TEXT */}
-      <div className="min-w-0 text-center">
-        <div
+      <div className="min-w-0 text-center flex-grow-1">
+        {/* <div
           className={`${type === "children" || type === "login" || type === "register" || type === "forgotpassword" ? "brand-title" : "logo-title"} ${(type === "login" || type === "register" || type === "forgotpassword") && "text-white"}`}
         >
           {FIRST_NAME}
@@ -24,6 +24,11 @@ export default function Logo({ type }: { type: string }) {
           className={`${type === "children" || type === "login" || type === "register" || type === "forgotpassword" ? "brand-title" : "logo-title"} ${(type === "login" || type === "register" || type === "forgotpassword") && "text-white"}`}
         >
           {LAST_NAME}
+        </div> */}
+        <div
+          className={`${type === "children" || type === "login" || type === "register" || type === "forgotpassword" ? "brand-title" : "logo-title"} ${(type === "login" || type === "register" || type === "forgotpassword") && "text-white"}`}
+        >
+          {CENTER_NAME}
         </div>
       </div>
     </Link>
