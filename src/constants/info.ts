@@ -12,9 +12,11 @@ export const FIRST_NAME =
   "TRUNG TÂM CAN THIỆP SỚM";
 export const LAST_NAME =
   "HOA BAN MAI";
-export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
+// export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
+export const activeCategoryDefault = "gGNJ5mQZRSxkSW4qAu6F";//HoaBanMaiEdu
 export const indexedDBName = "HBMEdu";
-export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile
+export const ADMINID = "52LPPcC0ejgAWSEoWhWBCT8KHsm2";//HoaBanMaiEdu
+// export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile
 const planCardThemes = [
   {
     bg: "#fdecef",
@@ -57,6 +59,16 @@ const planCardThemes = [
     icon: "/icons/gim_white.png",
   },
 ];
+export const fieldOrder = [
+    "gGNJ5mQZRSxkSW4qAu6F", // Ngôn ngữ hiểu
+    "3EUhuJoxzHauQpx1pPxq", // Ngôn ngữ diễn đạt
+    "zfnX1X3wvP46rRF3k4gB", // Chỉnh âm
+    "j6fFXTUD1D6rym4UmKkV", // Nhận thức
+    "cyg1PnZ4snHm583dFBzp", // Vận động tinh
+    "qw6gesBxUmEgEDow153O", // Cá nhân xã hội
+    "Nji6cMUy0TcZ1Tw8B2iG", // Tập trung chú ý
+    "48UQhGWIQECsi8lAd7Sc", // Hành vi
+  ];
 
 // functions:
 export const getCurrentMonth = () => {
